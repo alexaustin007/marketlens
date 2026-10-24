@@ -1,0 +1,27 @@
+name: Deploy Snowflake ingestion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - snowflake/load_jpm_prices.sql
+      - .github/workflows/deploy-snowflake.yml
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: marketlens-dev
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: snowflakedb/snowflake-actions@v3
+      - name: Deploy procedure
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+        run: snow sql -x -f snowflake/load_jpm_prices.sql
