@@ -1,0 +1,10 @@
+
+name: marketlens
+version: '1.0.0'
+config-version: 2
+profile: marketlens
+model-paths: ["models"]
+
+models:
+  marketlens:
+    +materialized: view
